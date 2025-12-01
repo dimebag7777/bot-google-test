@@ -4,6 +4,7 @@ services:
   mysql:
     image: mysql:8.0
     container_name: trading-bot-mysql
+    command: --default-authentication-plugin=mysql_native_password --innodb-buffer-pool-size=64M --max-connections=50
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: trading_bot_db

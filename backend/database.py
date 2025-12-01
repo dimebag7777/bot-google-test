@@ -1,4 +1,5 @@
 import os
+import time
 import pymysql
 from pymysql.cursors import DictCursor
 import bcrypt
@@ -39,27 +40,36 @@ def get_db_connection():
 
 def init_database():
     """Initialize database and create tables if they don't exist"""
-    try:
-        with get_db_connection() as conn:
-            with conn.cursor() as cursor:
-                # Create users table
-                cursor.execute("""
-                    CREATE TABLE IF NOT EXISTS users (
-                        id INT AUTO_INCREMENT PRIMARY KEY,
-                        username VARCHAR(50) UNIQUE NOT NULL,
-                        email VARCHAR(100) UNIQUE NOT NULL,
-                        password_hash VARCHAR(255) NOT NULL,
-                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                        INDEX idx_email (email),
-                        INDEX idx_username (username)
-                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-                """)
-                logger.info("Database tables initialized successfully")
-                return True
-    except Exception as e:
-        logger.error(f"Failed to initialize database: {str(e)}")
-        return False
+    max_retries = 10
+    retry_delay = 5
+    
+    for attempt in range(max_retries):
+        try:
+            with get_db_connection() as conn:
+                with conn.cursor() as cursor:
+                    # Create users table
+                    cursor.execute("""
+                        CREATE TABLE IF NOT EXISTS users (
+                            id INT AUTO_INCREMENT PRIMARY KEY,
+                            username VARCHAR(50) UNIQUE NOT NULL,
+                            email VARCHAR(100) UNIQUE NOT NULL,
+                            password_hash VARCHAR(255) NOT NULL,
+                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                            INDEX idx_email (email),
+                            INDEX idx_username (username)
+                        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+                    """)
+                    logger.info("Database tables initialized successfully")
+                    return True
+        except Exception as e:
+            logger.warning(f"Database connection attempt {attempt + 1}/{max_retries} failed: {str(e)}")
+            if attempt < max_retries - 1:
+                logger.info(f"Retrying in {retry_delay} seconds...")
+                time.sleep(retry_delay)
+            else:
+                logger.error("Failed to initialize database after multiple attempts")
+                return False
 
 
 class User:
