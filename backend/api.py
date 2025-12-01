@@ -8,10 +8,8 @@ from datetime import datetime
 from dotenv import load_dotenv
 
 # Load environment variables
+# Load environment variables
 load_dotenv()
-print(f"DEBUG: .env loaded. DB_HOST={os.getenv('DB_HOST')}")
-print(f"DEBUG: Current working directory: {os.getcwd()}")
-print(f"DEBUG: Directory contents: {os.listdir('.')}")
 
 from binance_api import BinanceAPI
 from indicators import calculate_all_indicators
