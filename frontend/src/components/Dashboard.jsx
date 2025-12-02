@@ -8,7 +8,7 @@ import PriceCard from './PriceCard';
 import LoadingSpinner from './LoadingSpinner';
 import ErrorDisplay from './ErrorDisplay';
 
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = '';
 
 function Dashboard() {
     const [data, setData] = useState(null);

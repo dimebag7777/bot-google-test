@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
-  const API_URL = 'http://localhost:5000/api/auth';
+  const API_URL = '/api/auth';
 
   // Verify token on mount
   useEffect(() => {
