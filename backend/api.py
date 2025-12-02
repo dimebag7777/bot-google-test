@@ -186,12 +186,12 @@ def debug_data():
         "first_asset": current_data.get("top_assets", [])[0] if current_data.get("top_assets") else None
     })
 
+# Start background update thread when module loads (works with Gunicorn)
+update_thread = threading.Thread(target=update_data, daemon=True)
+update_thread.start()
+
 
 if __name__ == "__main__":
-    # Start background update thread
-    update_thread = threading.Thread(target=update_data, daemon=True)
-    update_thread.start()
-
-    # Starting Trading Bot API Server on http://0.0.0.0:5000
-    
+    # This block only runs when using `python api.py` directly
+    # The background thread is already started above
     app.run(host="0.0.0.0", port=5000, debug=False)
