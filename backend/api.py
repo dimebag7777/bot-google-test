@@ -85,7 +85,7 @@ def get_most_liquid_indicators() -> dict:
 
         return result
     except Exception as e:
-        # Silently handle errors
+        print(f"Error in get_most_liquid_indicators: {e}")
         return None
 
 
@@ -118,13 +118,15 @@ def get_top_liquid_indicators(count: int = 5) -> list:
 
         return results
     except Exception as e:
-        # Silently handle errors
+        print(f"Error in get_top_liquid_indicators: {e}")
         return []
 
 
 def update_data():
     """Background thread to update data continuously"""
     global current_data
+    
+    print("Background update thread started...", flush=True)
     
     while True:
         try:
@@ -140,8 +142,8 @@ def update_data():
             }
 
         except Exception as e:
+            print(f"Error in update_data loop: {e}")
             current_data["error"] = str(e)
-            # Silently handle errors
 
         time.sleep(UPDATE_INTERVAL)
 
